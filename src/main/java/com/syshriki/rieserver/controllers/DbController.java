@@ -1,13 +1,12 @@
 package com.syshriki.rieserver.controllers;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.net.http.HttpHeaders;
+import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,12 +15,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class DbController {
     @Autowired Environment env;
 
+	@Autowired
+	ResourceLoader resourceLoader;
+    
     @GetMapping("/rieserver.db")
-	public ResponseEntity<InputStreamResource>  findRecipesByName() throws FileNotFoundException {
-            File file = new File(env.getProperty("dbFile")).getAbsoluteFile();
-            InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
+	public ResponseEntity<Resource>  findRecipesByName() throws FileNotFoundException, IOException {
+		    Resource resource = resourceLoader.getResource("classpath:"+env.getProperty("dbFile"));
             return ResponseEntity.ok()
-                    .contentLength(file.length())
+                    .contentLength(resource.contentLength())
                     .header("Content-Disposition", "attachment; filename=rieserver.db")
                     .body(resource);
 	}
