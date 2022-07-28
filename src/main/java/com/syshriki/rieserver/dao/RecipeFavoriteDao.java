@@ -17,7 +17,7 @@ public class RecipeFavoriteDao {
         String sql = "DELETE FROM recipe_favorites WHERE recipe_slug = ? AND username = ?";
         jdbcTemplate.update(sql, slug, username);
         System.out.println("recipe " + slug + " unfavorited by " + username);
-        return true;
+        return false;
     }
 
     public boolean create(String username, String slug) {

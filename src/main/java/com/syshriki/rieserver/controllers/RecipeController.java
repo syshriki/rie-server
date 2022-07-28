@@ -74,7 +74,7 @@ public class RecipeController {
 		
 		userService.findOrThrow(username);
 
-		RecipeWithFavorite recipe = recipeDao.findBySlug(username, slug);
+		RecipeWithFavorite recipe = recipeDao.findBySlugWithFavorite(username, slug);
 
 		if(recipe == null){
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "recipe with slug " + slug + " not found");
@@ -161,7 +161,7 @@ public class RecipeController {
 
 		userService.findOrThrow(username);
 
-		var originalRecipe = recipeDao.findBySlug(username, slug);
+		var originalRecipe = recipeDao.findBySlug(slug);
 
 		if(originalRecipe == null){
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "recipe with slug " + slug + " not found");
@@ -192,7 +192,7 @@ public class RecipeController {
 
 		userService.findOrThrow(username);
 
-		var originalRecipe = recipeDao.findBySlug(username, slug);
+		var originalRecipe = recipeDao.findBySlug(slug);
 
 		if(originalRecipe == null){
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "recipe with slug " + slug + " not found");

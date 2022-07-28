@@ -48,10 +48,20 @@ public class RecipeDao {
     }
 
 
-    public RecipeWithFavorite findBySlug(String username, String slug){
+    public RecipeWithFavorite findBySlugWithFavorite(String username, String slug){
         String sql = "SELECT r.*, rf.created_at is NOT NULL isFavorite FROM recipes r LEFT JOIN recipe_favorites rf on r.slug = rf.recipe_slug AND rf.username = ? WHERE r.slug = ? AND r.deleted_at is NULL ORDER BY r.created_at DESC LIMIT 1;";
         try {
             var recipe = jdbcTemplate.queryForObject(sql, new RecipeWithFavoriteMapper(), username, slug);
+            return recipe;
+        }catch(EmptyResultDataAccessException e){
+            return null;
+        }
+    }
+
+    public Recipe findBySlug(String slug){
+        String sql = "SELECT * FROM recipes WHERE slug = ? AND deleted_at is NULL ORDER BY created_at DESC LIMIT 1;";
+        try {
+            var recipe = jdbcTemplate.queryForObject(sql, new RecipeMapper(), slug);
             return recipe;
         }catch(EmptyResultDataAccessException e){
             return null;
