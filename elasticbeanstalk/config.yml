@@ -1,2 +1,0 @@
-deploy:
-  artifact: target/rie-server-0.0.1-SNAPSHOT.jar
