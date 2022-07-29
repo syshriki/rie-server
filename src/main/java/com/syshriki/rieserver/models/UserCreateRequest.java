@@ -1,5 +1,13 @@
 package com.syshriki.rieserver.models;
 
-public record UserCreateRequest(String username) {
+public class UserCreateRequest {
+    String username;
+    public UserCreateRequest(String username){
+        this.username = username;
+    }
     
+    public String username(){
+        return username;
+    }
+
 }
