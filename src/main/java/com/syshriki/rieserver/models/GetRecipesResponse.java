@@ -13,15 +13,15 @@ public class GetRecipesResponse {
         this.recipes = recipes;
     }    
 
-    public Boolean hasNextPage(){
+    public Boolean getHasNextPage(){
         return hasNextPage;
     }
 
-    public Long nextCursor(){
+    public Long getNextCursor(){
         return nextCursor;
     }
 
-    public List<RecipeDto> recipes(){
+    public List<RecipeDto> getRecipes(){
         return recipes;
     }
 }

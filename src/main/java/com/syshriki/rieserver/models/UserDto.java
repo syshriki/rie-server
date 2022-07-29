@@ -8,11 +8,11 @@ public class UserDto{
         this.createdAt = createdAt;
     }
     
-    public String username(){
+    public String getUsername(){
         return username;
     }
 
-    public Long createdAt(){
+    public Long getCreatedAt(){
         return createdAt;
     }
 }

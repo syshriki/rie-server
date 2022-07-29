@@ -19,20 +19,20 @@ public class RecipeDao {
         String sql = "INSERT INTO recipes (id,name,recipe,description,created_at,author,slug) VALUES (?,?,?,?,?,?,?)";
          
         int rows = jdbcTemplate.update(sql,
-            r.id(),
-            r.name(),
-            r.recipe(),
-            r.description(),
-            r.createdAt(),
-            r.author(),
-            r.slug()
+            r.getId(),
+            r.getName(),
+            r.getRecipe(),
+            r.getDescription(),
+            r.getCreatedAt(),
+            r.getAuthor(),
+            r.getSlug()
         );
 
         if (rows > 0) {
-            System.out.println("recipe "+r.name()+" inserted");
+            System.out.println("recipe "+r.getName()+" inserted");
         }
 
-        return r.id();
+        return r.getId();
     }
 
     public RecipeDto findById(String id){

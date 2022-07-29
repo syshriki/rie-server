@@ -16,27 +16,27 @@ public class RecipeDto{
         this.createdAt = createdAt;
         this.author = author;
         this.slug = slug;
-    } 
+    }
 
-    public String id(){
+    public String getId(){
         return id;
     }
-    public String name(){
+    public String getName(){
         return name;
     }
-    public String recipe(){
+    public String getRecipe(){
         return recipe;
     }
-    public String description(){
+    public String getDescription(){
         return description;
     } 
-    public Long createdAt(){
+    public Long getCreatedAt(){
         return createdAt;
     } 
-    public String author(){
+    public String getAuthor(){
         return author;
     } 
-    public String slug(){
+    public String getSlug(){
         return slug;
     }
 }

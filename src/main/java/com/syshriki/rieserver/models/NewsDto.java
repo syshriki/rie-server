@@ -19,25 +19,25 @@ public class NewsDto{
         this.recipeSlug = recipeSlug;
      }
 
-    public String id(){
+    public String getId(){
         return id;
     }
-    public String type(){
+    public String getType(){
         return type;
     }
-    public String text(){
+    public String getText(){
         return text;
     }
-    public String title(){
+    public String getTitle(){
         return title;
     }
-    public String author(){
+    public String getAuthor(){
         return author;
     }
-    public Long createdAt(){
+    public Long getCreatedAt(){
         return createdAt;
     } 
-    public String recipeSlug(){
+    public String getRecipeSlug(){
         return recipeSlug;
     }
     }

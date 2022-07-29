@@ -10,13 +10,13 @@ public class RecipeCreateRequest {
         this.recipe = recipe;
     }
 
-    public String name(){
+    public String getName(){
         return name;
     }
-    public String description(){
+    public String getDescription(){
         return description;
     } 
-    public String recipe(){
+    public String getRecipe(){
         return recipe;
     }
 }

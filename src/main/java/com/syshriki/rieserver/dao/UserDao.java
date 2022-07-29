@@ -17,8 +17,8 @@ public class UserDao {
         String sql = "INSERT INTO users (username,created_at) VALUES (?,?)";
          
         int rows = jdbcTemplate.update(sql,
-        userDto.username(),
-            userDto.createdAt()
+        userDto.getUsername(),
+            userDto.getCreatedAt()
         );
 
         if (rows > 0) {

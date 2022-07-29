@@ -13,14 +13,14 @@ public class GetNewsResponse{
         this.news = news;
     }
 
-    public Boolean hasNextPage(){
+    public Boolean getHasNextPage(){
         return hasNextPage;
     }
     
-    public Long nextCursor(){
+    public Long getNextCursor(){
         return nextCursor;
     }
-    public List<NewsDto> news(){
+    public List<NewsDto> getNews(){
         return news;
     } 
 }

@@ -19,13 +19,13 @@ public class NewsDao {
         String sql = "INSERT INTO news (id,type,text,title,author,created_at,recipe_slug) VALUES (?,?,?,?,?,?,?)";
          
         int rows = jdbcTemplate.update(sql,
-            r.id(),
-            r.type(),
-            r.text(),
-            r.title(),
-            r.author(),
-            r.createdAt(),
-            r.recipeSlug()
+            r.getId(),
+            r.getType(),
+            r.getText(),
+            r.getTitle(),
+            r.getAuthor(),
+            r.getCreatedAt(),
+            r.getRecipeSlug()
         );
 
         if (rows > 0) {

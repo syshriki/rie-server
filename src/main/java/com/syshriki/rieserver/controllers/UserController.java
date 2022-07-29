@@ -32,7 +32,7 @@ public class UserController {
 		userService.findOrThrow(username);
 
 		var userDto = new UserDto(
-			user.username(),  
+			user.getUsername(),  
 			System.currentTimeMillis()/1000
 		);
 
@@ -44,7 +44,7 @@ public class UserController {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "something is wrong with the request " + username);
 		}
 		
-		return user.username();
+		return user.getUsername();
 	}
 
 

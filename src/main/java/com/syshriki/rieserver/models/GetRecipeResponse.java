@@ -6,7 +6,7 @@ public class GetRecipeResponse {
         this.recipe = recipe;
     }
 
-    public RecipeDto recipe(){
+    public RecipeDto getRecipe(){
         return recipe;
     }
 

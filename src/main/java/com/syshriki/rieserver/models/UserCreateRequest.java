@@ -6,7 +6,7 @@ public class UserCreateRequest {
         this.username = username;
     }
     
-    public String username(){
+    public String getUsername(){
         return username;
     }
 
