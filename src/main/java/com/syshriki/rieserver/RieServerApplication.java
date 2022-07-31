@@ -13,8 +13,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 
 import javax.sql.DataSource;
@@ -38,8 +40,8 @@ public class RieServerApplication {
 			var statments = schemaSql.split(";");
 			var connection = dataSource.getConnection();
 			for(var s: statments){
-				connection.createStatement().execute(s);
 				System.out.println(s);
+				connection.createStatement().execute(s);
 			}
 		  }
 		
@@ -59,11 +61,25 @@ public class RieServerApplication {
 	
 	@Bean
 	public DataSource dataSource() throws SQLException, IOException {
-		ClassLoader classLoader = this.getClass().getClassLoader();
-		File db = new File(classLoader.getResource(".").getFile() + "/" + env.getProperty("dbFile"));
 		final DriverManagerDataSource dataSource = new DriverManagerDataSource();
 		dataSource.setDriverClassName(env.getProperty("driverClassName"));
-		dataSource.setUrl("jdbc:sqlite:"+db.getAbsolutePath());
+		System.out.println(1);
+		Resource resource = resourceLoader.getResource("classpath:"+env.getProperty("dbFile"));
+		System.out.println(2);
+		System.out.println(3);
+		Path destination = Paths.get("./"+env.getProperty("dbFile"));
+		System.out.println(4);
+		try{
+			Files.copy(resource.getInputStream(), destination);
+			System.out.println(5);
+		}catch(FileAlreadyExistsException e){
+			System.out.println("db alread exists");
+		}
+
+		if(resource.exists()){
+			System.out.println(destination);
+			dataSource.setUrl("jdbc:sqlite:"+destination);
+		}
 		initializeDb(dataSource);
 		return dataSource;
 	}
