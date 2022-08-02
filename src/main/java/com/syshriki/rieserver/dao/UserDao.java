@@ -17,12 +17,12 @@ public class UserDao {
         String sql = "INSERT INTO users (username,created_at) VALUES (?,?)";
          
         int rows = jdbcTemplate.update(sql,
-        userDto.getUsername(),
-            userDto.getCreatedAt()
+        userDto.username(),
+            userDto.createdAt()
         );
 
         if (rows > 0) {
-            System.out.println("recipe inserted");
+            System.out.println("user inserted");
         }
     }
 

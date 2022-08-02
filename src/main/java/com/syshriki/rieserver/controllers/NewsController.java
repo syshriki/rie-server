@@ -32,7 +32,7 @@ public class NewsController {
 			newsDao.getLatest(cursor, limit) ;
 		
 		int count = news.size();
-		Long nextCursor =  count < limit ? null : news.get(count -1).getCreatedAt();
+		Long nextCursor =  count < limit ? null : news.get(count -1).createdAt();
 		
 		return new GetNewsResponse(nextCursor != null, nextCursor, news);
 	}

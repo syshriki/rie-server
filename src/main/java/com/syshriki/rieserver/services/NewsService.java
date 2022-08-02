@@ -20,10 +20,10 @@ public class NewsService {
     public void newRecipe(RecipeDto recipe) throws Exception{
         var type = "recipe";
         var title = "New recipe added!";
-        var text = recipe.getName();
-        var newsId = generateId(type, recipe.getId());
+        var text = recipe.name();
+        var newsId = generateId(type, recipe.id());
         Long createdAt = System.currentTimeMillis()/1000;
-        var newsDto = new NewsDto(newsId, type, text, title, recipe.getAuthor(), createdAt, recipe.getSlug());
+        var newsDto = new NewsDto(newsId, type, text, title, recipe.author(), createdAt, recipe.slug());
         newsDao.createNews(newsDto);
     }
 }

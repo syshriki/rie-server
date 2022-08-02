@@ -56,7 +56,7 @@ public class RecipeController {
 		var recipes = recipeDao.fuzzyFindByName(q, cursor, limit);
 		
 		int count = recipes.size();
-		Long nextCursor = count < limit ? null : recipes.get(count-1).getCreatedAt();
+		Long nextCursor = count < limit ? null : recipes.get(count-1).createdAt();
 		
 		return new GetRecipesResponse(nextCursor != null, nextCursor, recipes);
 	}
@@ -91,9 +91,9 @@ public class RecipeController {
 
 		var recipeDto = new RecipeDto(
 			recipeId, 
-			recipe.getName(), 
-			recipe.getRecipe(), 
-			recipe.getDescription(), 
+			recipe.name(), 
+			recipe.recipe(), 
+			recipe.description(), 
 			System.currentTimeMillis()/1000, 
 			username,
 			recipeSlug
@@ -108,7 +108,7 @@ public class RecipeController {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "something is wrong with the request " + username);
 		}
 		
-		return recipeDto.getSlug();
+		return recipeDto.slug();
 	}
 
 	@PutMapping("/recipes")
@@ -120,31 +120,31 @@ public class RecipeController {
 		
 		userService.findOrThrow(username);
 
-		var originalRecipe = recipeDao.findById(recipe.getId());
+		var originalRecipe = recipeDao.findById(recipe.id());
 		
 		if(originalRecipe == null){
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "recipe with id " + recipe.getId() + " not found");
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "recipe with id " + recipe.id() + " not found");
 		}
 
 		var newRecipeId = recipeService.generateRecipeId(username);
 
 		var recipeDto = new RecipeDto(
 			newRecipeId, 
-			recipe.getName(), 
-			recipe.getRecipe(), 
-			recipe.getDescription(), 
+			recipe.name(), 
+			recipe.recipe(), 
+			recipe.description(), 
 			System.currentTimeMillis()/1000, 
-			originalRecipe.getAuthor(),
-			originalRecipe.getSlug()
+			originalRecipe.author(),
+			originalRecipe.slug()
 		);
 
-		if(recipeDao.deleteBySlug(originalRecipe.getSlug())){
+		if(recipeDao.deleteBySlug(originalRecipe.slug())){
 			recipeDao.create(recipeDto);
 		} else {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "cannot delete recipe with id " + originalRecipe.getId());	
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "cannot delete recipe with id " + originalRecipe.id());	
 		}
 			
-		return originalRecipe.getSlug();
+		return originalRecipe.slug();
 	}
 
 	@DeleteMapping("/recipes/{slug}")
@@ -162,7 +162,7 @@ public class RecipeController {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "recipe with slug " + slug + " not found");
 		}
 
-		if(!originalRecipe.getAuthor().equals(username)){
+		if(!originalRecipe.author().equals(username)){
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, username + " is not owner of recipe");
         }
 
