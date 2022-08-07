@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 
 import com.syshriki.rieserver.dao.UserDao;
 import com.syshriki.rieserver.models.UserCreateRequest;
-import com.syshriki.rieserver.models.UserDto;
+import com.syshriki.rieserver.models.User;
 import com.syshriki.rieserver.services.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ public class UserController {
 		
 		userService.findOrThrow(username);
 
-		var userDto = new UserDto(
+		var userDto = new User(
 			user.username(),  
 			System.currentTimeMillis()/1000
 		);

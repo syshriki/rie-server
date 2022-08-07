@@ -3,7 +3,9 @@ package com.syshriki.rieserver.dao;
 import java.util.List;
 
 import com.syshriki.rieserver.mappers.RecipeMapper;
-import com.syshriki.rieserver.models.RecipeDto;
+import com.syshriki.rieserver.mappers.RecipeWithFavoriteMapper;
+import com.syshriki.rieserver.models.Recipe;
+import com.syshriki.rieserver.models.RecipeWithFavorite;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -15,7 +17,7 @@ public class RecipeDao {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public String create(RecipeDto r)  {
+    public String create(Recipe r)  {
         String sql = "INSERT INTO recipes (id,name,recipe,description,created_at,author,slug) VALUES (?,?,?,?,?,?,?)";
          
         int rows = jdbcTemplate.update(sql,
@@ -35,7 +37,7 @@ public class RecipeDao {
         return r.id();
     }
 
-    public RecipeDto findById(String id){
+    public Recipe findById(String id){
         String sql = "SELECT * FROM recipes WHERE id = ? LIMIT 1";
         try {
             var recipe = jdbcTemplate.queryForObject(sql, new RecipeMapper(), id);
@@ -45,19 +47,20 @@ public class RecipeDao {
         }
     }
 
-    public RecipeDto findBySlug(String slug){
-        String sql = "SELECT * FROM recipes WHERE slug = ? AND deleted_at is NULL ORDER BY created_at DESC LIMIT 1";
+
+    public RecipeWithFavorite findBySlug(String username, String slug){
+        String sql = "SELECT r.*, rf.created_at is NOT NULL isFavorite FROM recipes r LEFT JOIN recipe_favorites rf on r.slug = rf.recipe_slug AND rf.username = ? WHERE r.slug = ? AND r.deleted_at is NULL ORDER BY r.created_at DESC LIMIT 1;";
         try {
-            var recipe = jdbcTemplate.queryForObject(sql, new RecipeMapper(), slug);
+            var recipe = jdbcTemplate.queryForObject(sql, new RecipeWithFavoriteMapper(), username, slug);
             return recipe;
         }catch(EmptyResultDataAccessException e){
             return null;
         }
     }
 
-    public List<RecipeDto> fuzzyFindByName(String name, Long cursor, int limit){
-        String sql = "SELECT id, name, slug, description, author, created_at, recipe FROM recipes WHERE created_at < ? AND name LIKE ? AND deleted_at is NULL ORDER BY created_at DESC LIMIT ?";
-        var recipes = jdbcTemplate.query(sql, new RecipeMapper(), cursor, "%"+name+"%", limit);
+    public List<RecipeWithFavorite> fuzzyFindByName(String username, String name, Long cursor, int limit){
+        String sql = "SELECT r.*, rf.created_at is NOT NULL isFavorite FROM recipes r LEFT JOIN recipe_favorites rf on r.slug = rf.recipe_slug AND rf.username = ? WHERE r.created_at < ? AND r.name LIKE ? AND r.deleted_at is NULL ORDER BY r.created_at DESC LIMIT ?";
+        var recipes = jdbcTemplate.query(sql, new RecipeWithFavoriteMapper(), username, cursor, "%"+name+"%", limit);
 
         return recipes;
     }

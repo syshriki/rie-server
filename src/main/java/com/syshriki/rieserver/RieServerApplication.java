@@ -63,15 +63,10 @@ public class RieServerApplication {
 	public DataSource dataSource() throws SQLException, IOException {
 		final DriverManagerDataSource dataSource = new DriverManagerDataSource();
 		dataSource.setDriverClassName(env.getProperty("driverClassName"));
-		System.out.println(1);
 		Resource resource = resourceLoader.getResource("classpath:"+env.getProperty("dbFile"));
-		System.out.println(2);
-		System.out.println(3);
 		Path destination = Paths.get("./"+env.getProperty("dbFile"));
-		System.out.println(4);
 		try{
 			Files.copy(resource.getInputStream(), destination);
-			System.out.println(5);
 		}catch(FileAlreadyExistsException e){
 			System.out.println("db alread exists");
 		}

@@ -1,7 +1,7 @@
 package com.syshriki.rieserver.services;
 
 import com.syshriki.rieserver.dao.UserDao;
-import com.syshriki.rieserver.models.UserDto;
+import com.syshriki.rieserver.models.User;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,7 +13,7 @@ public class UserService {
     @Autowired
 	UserDao userDao;
 
-    public UserDto findOrThrow(String username) throws ResponseStatusException{
+    public User findOrThrow(String username) throws ResponseStatusException{
         var user = userDao.findByUsername(username);
 
 		if (user == null) {

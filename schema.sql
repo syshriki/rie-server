@@ -19,6 +19,18 @@ CREATE TABLE recipes(
       UNIQUE (slug, deleted_at)
 );
 
+CREATE TABLE recipe_favorites(
+   recipe_slug       VARCHAR(20)     NOT NULL,
+   username        VARCHAR(20)     NOT NULL,
+   created_at      INTEGER         NOT NULL,
+   CONSTRAINT fk_recipe_favorites_recipe_id
+      FOREIGN KEY(recipe_slug) 
+      REFERENCES recipes(slug),
+   CONSTRAINT fk_recipe_favorites_username
+      FOREIGN KEY(username) 
+      REFERENCES users(username)
+);
+
 CREATE TABLE news(
    id             VARCHAR(12) PRIMARY KEY     NOT NULL,
    type           VARCHAR(100)                NOT NULL,

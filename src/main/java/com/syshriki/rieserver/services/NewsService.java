@@ -1,8 +1,8 @@
 package com.syshriki.rieserver.services;
 
 import com.syshriki.rieserver.dao.NewsDao;
-import com.syshriki.rieserver.models.NewsDto;
-import com.syshriki.rieserver.models.RecipeDto;
+import com.syshriki.rieserver.models.News;
+import com.syshriki.rieserver.models.Recipe;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,13 +17,13 @@ public class NewsService {
     }
 
     //String id, String type, String text, String title, String author, Timestamp createdAt, String recipeId
-    public void newRecipe(RecipeDto recipe) throws Exception{
+    public void newRecipe(Recipe recipe) throws Exception{
         var type = "recipe";
         var title = "New recipe added!";
         var text = recipe.name();
         var newsId = generateId(type, recipe.id());
         Long createdAt = System.currentTimeMillis()/1000;
-        var newsDto = new NewsDto(newsId, type, text, title, recipe.author(), createdAt, recipe.slug());
+        var newsDto = new News(newsId, type, text, title, recipe.author(), createdAt, recipe.slug());
         newsDao.createNews(newsDto);
     }
 }

@@ -2,8 +2,10 @@ package com.syshriki.rieserver.controllers;
 
 import com.syshriki.rieserver.dao.NewsDao;
 import com.syshriki.rieserver.dao.RecipeDao;
-import com.syshriki.rieserver.models.RecipeDto;
+import com.syshriki.rieserver.dao.RecipeFavoriteDao;
+import com.syshriki.rieserver.models.Recipe;
 import com.syshriki.rieserver.models.RecipeUpdateRequest;
+import com.syshriki.rieserver.models.RecipeWithFavorite;
 import com.syshriki.rieserver.services.NewsService;
 import com.syshriki.rieserver.services.RecipeService;
 import com.syshriki.rieserver.services.UserService;
@@ -36,6 +38,9 @@ public class RecipeController {
 	NewsDao newsDao;
 
 	@Autowired
+	RecipeFavoriteDao recipeFavoriteDao;
+
+	@Autowired
 	RecipeService recipeService;
 
 	@Autowired
@@ -53,7 +58,7 @@ public class RecipeController {
 		int limit = 20;
 		userService.findOrThrow(username);
 
-		var recipes = recipeDao.fuzzyFindByName(q, cursor, limit);
+		var recipes = recipeDao.fuzzyFindByName(username, q, cursor, limit);
 		
 		int count = recipes.size();
 		Long nextCursor = count < limit ? null : recipes.get(count-1).createdAt();
@@ -69,7 +74,7 @@ public class RecipeController {
 		
 		userService.findOrThrow(username);
 
-		RecipeDto recipe = recipeDao.findBySlug(slug);
+		RecipeWithFavorite recipe = recipeDao.findBySlug(username, slug);
 
 		if(recipe == null){
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "recipe with slug " + slug + " not found");
@@ -89,7 +94,7 @@ public class RecipeController {
 		
 		var recipeSlug = recipeService.generateRecipeId(username);
 
-		var recipeDto = new RecipeDto(
+		var recipeDto = new Recipe(
 			recipeId, 
 			recipe.name(), 
 			recipe.recipe(), 
@@ -128,7 +133,7 @@ public class RecipeController {
 
 		var newRecipeId = recipeService.generateRecipeId(username);
 
-		var recipeDto = new RecipeDto(
+		var recipeDto = new Recipe(
 			newRecipeId, 
 			recipe.name(), 
 			recipe.recipe(), 
@@ -156,7 +161,7 @@ public class RecipeController {
 
 		userService.findOrThrow(username);
 
-		var originalRecipe = recipeDao.findBySlug(slug);
+		var originalRecipe = recipeDao.findBySlug(username, slug);
 
 		if(originalRecipe == null){
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "recipe with slug " + slug + " not found");
@@ -176,5 +181,34 @@ public class RecipeController {
 		}
 		
 		return slug;
+	}
+
+	@PostMapping("/recipes/{slug}/favorite")
+	@Transactional
+	public Boolean toggleFavorite(
+		@RequestHeader HttpHeaders headers,
+		@PathVariable String slug) {
+		var username = headers.get("Authorization").get(0);
+
+		userService.findOrThrow(username);
+
+		var originalRecipe = recipeDao.findBySlug(username, slug);
+
+		if(originalRecipe == null){
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "recipe with slug " + slug + " not found");
+		}
+
+		try{
+			var recipeFavorite = recipeFavoriteDao.find(username, slug);
+			if(recipeFavorite == null){
+				return recipeFavoriteDao.create(username, slug);
+			} else {
+				return recipeFavoriteDao.delete(username, slug);
+			}
+		} catch(Exception e){
+			//TODO check error for failure reason
+			System.out.println(e);
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "something is wrong with the request " + username);
+		}
 	}
 }

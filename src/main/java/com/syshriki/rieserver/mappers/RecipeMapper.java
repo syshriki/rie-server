@@ -3,15 +3,15 @@ package com.syshriki.rieserver.mappers;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import com.syshriki.rieserver.models.RecipeDto;
+import com.syshriki.rieserver.models.Recipe;
 
 import org.springframework.jdbc.core.RowMapper;
 
-public class RecipeMapper implements RowMapper<RecipeDto>{
+public class RecipeMapper implements RowMapper<Recipe>{
   
     @Override
-    public RecipeDto mapRow(ResultSet rs, int map) throws SQLException {
-        return new RecipeDto(
+    public Recipe mapRow(ResultSet rs, int map) throws SQLException {
+        return new Recipe(
             rs.getString("id"),
             rs.getString("name"),
             rs.getString("recipe"),

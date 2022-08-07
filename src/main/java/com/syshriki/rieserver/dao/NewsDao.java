@@ -3,7 +3,7 @@ package com.syshriki.rieserver.dao;
 import java.util.List;
 
 import com.syshriki.rieserver.mappers.NewsMapper;
-import com.syshriki.rieserver.models.NewsDto;
+import com.syshriki.rieserver.models.News;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -15,7 +15,7 @@ public class NewsDao {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public void createNews(NewsDto r) throws Exception {
+    public void createNews(News r) throws Exception {
         String sql = "INSERT INTO news (id,type,text,title,author,created_at,recipe_slug) VALUES (?,?,?,?,?,?,?)";
          
         int rows = jdbcTemplate.update(sql,
@@ -33,7 +33,7 @@ public class NewsDao {
         }
     }
 
-    public List<NewsDto> getLatest(Long cursor, int limit){
+    public List<News> getLatest(Long cursor, int limit){
         String sql = "SELECT * FROM news WHERE created_at < ? ORDER BY created_at DESC LIMIT ?";
 
         var news = jdbcTemplate.query(sql, new NewsMapper(), cursor, limit);
@@ -41,7 +41,7 @@ public class NewsDao {
         return news;
     }
 
-    public List<NewsDto> getLatest(int limit){
+    public List<News> getLatest(int limit){
         String sql = "SELECT * FROM news ORDER BY created_at DESC LIMIT ?";
 
         var news = jdbcTemplate.query(sql, new NewsMapper(), limit);
