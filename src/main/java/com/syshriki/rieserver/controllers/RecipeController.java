@@ -66,6 +66,7 @@ public class RecipeController {
 		return new GetRecipesResponse(nextCursor != null, nextCursor, recipes);
 	}
 
+	
 	@GetMapping("/recipes/{slug}")
 	public GetRecipeResponse getBySlug(
 		@PathVariable String slug,

@@ -36,4 +36,20 @@ public class RecipeFavoriteDao {
             return null;
         }
     }
+    
+    public Integer countFavoritesByUsername(String username, String name){
+        String sql = "SELECT count(1) as count FROM recipe_favorites rf INNER JOIN recipes r on r.slug = rf.recipe_slug WHERE r.deleted_at is NULL AND rf.username = ?  AND r.name LIKE ?;";
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, username, "%"+name+"%");        
+        return count;
+    }
+    
+    public RecipeFavorite findByUser(String username, String cursor) {
+        String sql = "SELECT r.title, r.author, r.created_at FROM recipe_favorites INNER JOIN recipes r on r.id = rf.recipeId WHERE username = ? AND created_at > ? LIMIT 20;";
+        try{
+            var recipeFavorite = jdbcTemplate.queryForObject(sql, new RecipeFavoriteMapper(), username, cursor);
+            return recipeFavorite;
+        }catch(EmptyResultDataAccessException e){
+            return null;
+        }
+    }
 }

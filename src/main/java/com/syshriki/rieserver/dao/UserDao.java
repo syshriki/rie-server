@@ -3,6 +3,8 @@ package com.syshriki.rieserver.dao;
 import com.syshriki.rieserver.mappers.UserMapper;
 import com.syshriki.rieserver.models.User;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -35,5 +37,17 @@ public class UserDao {
         } catch(EmptyResultDataAccessException e){
             return null;
         } 
+    }
+
+    public List<User> findByUsername(String username, Long cursor, int limit){
+        String sql = "SELECT username,created_at from users where username LIKE ? and created_at < ? ORDER BY created_at DESC LIMIT ?";
+        List<User> users = jdbcTemplate.query(sql, new UserMapper(), "%"+username+"%", cursor, limit);
+        return users;
+    }
+
+    public List<User> countByUsername(String username, Long cursor, int limit){
+        String sql = "SELECT username,created_at from users where username LIKE ? and created_at < ? ORDER BY created_at DESC LIMIT ?";
+        List<User> users = jdbcTemplate.query(sql, new UserMapper(), "%"+username+"%", cursor, limit);
+        return users;
     }
 }

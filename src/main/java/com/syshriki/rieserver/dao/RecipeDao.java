@@ -3,8 +3,10 @@ package com.syshriki.rieserver.dao;
 import java.util.List;
 
 import com.syshriki.rieserver.mappers.RecipeMapper;
+import com.syshriki.rieserver.mappers.RecipeTitleWithFavoriteMapper;
 import com.syshriki.rieserver.mappers.RecipeWithFavoriteMapper;
 import com.syshriki.rieserver.models.Recipe;
+import com.syshriki.rieserver.models.RecipeTitleWithFavorite;
 import com.syshriki.rieserver.models.RecipeWithFavorite;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +58,25 @@ public class RecipeDao {
         }catch(EmptyResultDataAccessException e){
             return null;
         }
+    }
+
+    public List<RecipeTitleWithFavorite> fuzzyFindTitleByUserWithFavorite(String recipeAuthor, String username, String name, Long cursor, int limit){
+        String sql = "SELECT r.id, r.name, r.author, r.slug, r.created_at, rf.created_at is NOT NULL isFavorite FROM recipes r LEFT JOIN recipe_favorites rf on r.slug = rf.recipe_slug AND rf.username = ? WHERE r.deleted_at is NULL AND r.created_at < ? AND r.name LIKE ? AND r.author = ? ORDER BY r.created_at LIMIT ?;";
+        var recipes = jdbcTemplate.query(sql, new RecipeTitleWithFavoriteMapper(), username, cursor, "%"+name+"%", recipeAuthor, limit);
+        return recipes;
+    
+    }
+
+    public List<RecipeTitleWithFavorite> fuzzyFindTitleByUserWithFavoriteOnly(String username, String viewer, String name, Long cursor, int limit){
+        String sql = "SELECT r.id, r.name, r.author, r.slug, r.created_at, rf2.created_at is NOT NULL as isFavorite FROM recipe_favorites rf INNER JOIN recipes r on r.slug = rf.recipe_slug LEFT JOIN recipe_favorites rf2 on r.slug = rf2.recipe_slug AND rf2.username = ? WHERE r.deleted_at is NULL AND rf.username = ? AND r.created_at < ? AND r.name LIKE ? ORDER BY r.created_at LIMIT ?;";
+        var recipes = jdbcTemplate.query(sql, new RecipeTitleWithFavoriteMapper(), viewer, username, cursor, "%"+name+"%", limit);
+        return recipes;
+    }
+    
+    public Integer countRecipesByUsername(String username, String name){
+        String sql = "SELECT count(id) as count FROM recipes WHERE author = ? AND name LIKE ? AND deleted_at is NULL;";
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, username, "%"+name+"%");        
+        return count;
     }
 
     public Recipe findBySlug(String slug){
