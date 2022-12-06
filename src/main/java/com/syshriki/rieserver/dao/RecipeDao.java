@@ -61,14 +61,14 @@ public class RecipeDao {
     }
 
     public List<RecipeTitleWithFavorite> fuzzyFindTitleByUserWithFavorite(String recipeAuthor, String username, String name, Long cursor, int limit){
-        String sql = "SELECT r.id, r.name, r.author, r.slug, r.created_at, rf.created_at is NOT NULL isFavorite FROM recipes r LEFT JOIN recipe_favorites rf on r.slug = rf.recipe_slug AND rf.username = ? WHERE r.deleted_at is NULL AND r.created_at < ? AND r.name LIKE ? AND r.author = ? ORDER BY r.created_at LIMIT ?;";
+        String sql = "SELECT r.id, r.name, r.author, r.slug, r.created_at, rf.created_at is NOT NULL isFavorite FROM recipes r LEFT JOIN recipe_favorites rf on r.slug = rf.recipe_slug AND rf.username = ? WHERE r.deleted_at is NULL AND r.created_at < ? AND r.name LIKE ? AND r.author = ? ORDER BY r.created_at DESC LIMIT ?;";
         var recipes = jdbcTemplate.query(sql, new RecipeTitleWithFavoriteMapper(), username, cursor, "%"+name+"%", recipeAuthor, limit);
         return recipes;
     
     }
 
     public List<RecipeTitleWithFavorite> fuzzyFindTitleByUserWithFavoriteOnly(String username, String viewer, String name, Long cursor, int limit){
-        String sql = "SELECT r.id, r.name, r.author, r.slug, r.created_at, rf2.created_at is NOT NULL as isFavorite FROM recipe_favorites rf INNER JOIN recipes r on r.slug = rf.recipe_slug LEFT JOIN recipe_favorites rf2 on r.slug = rf2.recipe_slug AND rf2.username = ? WHERE r.deleted_at is NULL AND rf.username = ? AND r.created_at < ? AND r.name LIKE ? ORDER BY r.created_at LIMIT ?;";
+        String sql = "SELECT r.id, r.name, r.author, r.slug, r.created_at, rf2.created_at is NOT NULL as isFavorite FROM recipe_favorites rf INNER JOIN recipes r on r.slug = rf.recipe_slug LEFT JOIN recipe_favorites rf2 on r.slug = rf2.recipe_slug AND rf2.username = ? WHERE r.deleted_at is NULL AND rf.username = ? AND r.created_at < ? AND r.name LIKE ? ORDER BY r.created_at DESC  LIMIT ?;";
         var recipes = jdbcTemplate.query(sql, new RecipeTitleWithFavoriteMapper(), viewer, username, cursor, "%"+name+"%", limit);
         return recipes;
     }
