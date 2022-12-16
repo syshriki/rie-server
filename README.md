@@ -1,6 +1,7 @@
 Deploy:
 ```
 mvn clean package spring-boot:repackage
+curl -L -o rieserver_bk.db https://api.rie.recipes/rieserver.db
 eb deploy
 ```
 
