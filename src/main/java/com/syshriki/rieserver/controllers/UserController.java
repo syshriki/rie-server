@@ -13,6 +13,8 @@ import com.syshriki.rieserver.models.GetUserProfileResponse;
 import com.syshriki.rieserver.models.User;
 import com.syshriki.rieserver.services.UserService;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -82,7 +84,7 @@ public class UserController {
 	
 	@GetMapping("/user/{author}/recipes")
 	public GetRecipesByUserResponse findRecipesByUserName(
-		@RequestParam Long cursor, 
+		@RequestParam Optional<String> cursor, 
 		@RequestParam String q, 
 		@PathVariable String author, 
 		@RequestHeader HttpHeaders headers) {
@@ -90,11 +92,14 @@ public class UserController {
 		int limit = 20;
 		userService.findOrThrow(username);
 
-		var recipes = recipeDao.fuzzyFindTitleByUserWithFavorite(author, username, q, cursor, limit);
+		var recipes = cursor.isPresent() ? 
+			recipeDao.fuzzyFindTitleByUserWithFavorite(author, username, q, cursor.get(), limit) :
+			recipeDao.fuzzyFindTitleByUserWithFavoriteNoCursor(author, username, q, limit);
+
 		var recipeCount = recipeDao.countRecipesByUsername(author, q);
 		var favoriteCount = recipeFavoriteDao.countFavoritesByUsername(author, q);
 		int count = recipes.size();
-		Long nextCursor = count < limit ? null : recipes.get(count-1).createdAt();
+		String nextCursor = count < limit ? null : recipes.get(count-1).name();
 		
 		return new GetRecipesByUserResponse(nextCursor != null, nextCursor, recipes, recipeCount, favoriteCount);
 	}
@@ -102,7 +107,7 @@ public class UserController {
 	
 	@GetMapping("/user/{author}/favorites")
 	public GetRecipeFavoritesResponse findFavoritesByUserName(
-		@RequestParam Long cursor, 
+		@RequestParam Optional<String> cursor, 
 		@RequestParam String q, 
 		@PathVariable String author, 
 		@RequestHeader HttpHeaders headers) {
@@ -110,12 +115,15 @@ public class UserController {
 		int limit = 20;
 		userService.findOrThrow(username);
 
-		var recipes = recipeDao.fuzzyFindTitleByUserWithFavoriteOnly(author, username, q, cursor, limit);
+		var recipes = cursor.isPresent() ? 
+			recipeDao.fuzzyFindTitleByUserWithFavoriteOnly(author, username, q, cursor.get(), limit) :
+			recipeDao.fuzzyFindTitleByUserWithFavoriteOnlyNoCursor(author, username, q, limit);
+			
 		var recipeCount = recipeDao.countRecipesByUsername(author, q);
 		var favoriteCount = recipeFavoriteDao.countFavoritesByUsername(author, q);
 
 		int count = recipes.size();
-		Long nextCursor = count < limit ? null : recipes.get(count-1).createdAt();
+		String nextCursor = count < limit ? null : recipes.get(count-1).name();
 		
 		return new GetRecipeFavoritesResponse(nextCursor != null, nextCursor, recipes, favoriteCount, recipeCount);
 	}
