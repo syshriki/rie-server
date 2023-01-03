@@ -31,6 +31,11 @@
 		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
@@ -55,6 +60,30 @@
 					<release>17</release>
 				</configuration>
 			</plugin>
+			<plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.6</version>
+            <executions>
+                <execution>
+                    <id>prepare</id>
+                    <phase>package</phase>
+                    <configuration>
+                        <target>
+                            <copy todir="${project.build.directory}/${project.build.finalName}/" overwrite="false">
+                                <fileset dir="./" includes=".ebextensions/**"/>
+								<fileset dir="./" includes=".platform/**"/>
+                            </copy>
+							<copy todir="${project.build.directory}/${project.build.finalName}/"  file="${project.build.directory}/${project.build.finalName}.jar"/>
+                            <zip compress="false" destfile="${project.build.directory}/${project.build.finalName}.zip" basedir="${project.build.directory}/${project.build.finalName}"/>
+                        </target>
+                    </configuration>
+                    <goals>
+                        <goal>run</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
 		</plugins>
 		<resources>
 			<resource>
